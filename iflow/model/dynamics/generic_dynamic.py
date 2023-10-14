@@ -148,22 +148,6 @@ class LimitCycleDynamicModel(nn.Module):
         ## Go To Cartesian
         xt1 = self.transform(xt1, reverse=True)
         return xt1
-    
-    def step_forward_hr(self, xt0, noise=False):
-        ## Go To Polar
-        xt0 = self.transform(xt0, reverse=False)
-        ##Evolve
-        vel = self.velocity(xt0)
-        mu = vel * self.dt + xt0
-        # if noise == True:
-        #     var_step = self.var * self.dt
-        #     mv_dist = tdist.MultivariateNormal(mu, var_step)
-        #     xt1 = mv_dist.rsample()
-        # else:
-        xt1 = mu
-        ## Go To Cartesian
-        xt1 = self.transform(xt1, reverse=True)
-        return xt1
 
     def step_backwards(self, xt1, noise=False):
         ## Go To Polar
@@ -343,7 +327,7 @@ class LimitCycleDynamicModel(nn.Module):
         _mu = torch.cat([sin_x[:,None],cos_x[:,None]],1)
         _var = 0.1*torch.eye(x.shape[1]).to(x)
 
-        if x.shape[1]>2:
+        if x.shape[1] > 2:
             _mu_z = torch.zeros(x.shape[0], x.shape[1]-2).to(x)
             _mu = torch.cat([_mu, _mu_z],1)
 

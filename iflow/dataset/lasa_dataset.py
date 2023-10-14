@@ -25,7 +25,7 @@ class LASA():
         trajs_np = np.asarray(self.trajs_real)
         self.n_trajs = trajs_np.shape[0]
         self.trj_length = trajs_np.shape[1]
-        self.n_dims  = trajs_np.shape[2]
+        self.n_dims = trajs_np.shape[2]
 
         ## Normalize trajectories ##
         trajs_np = np.reshape(trajs_np, (self.n_trajs * self.trj_length, self.n_dims))

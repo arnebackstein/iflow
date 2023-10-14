@@ -4,7 +4,7 @@ from sklearn.decomposition import PCA
 import scipy.fftpack
 
 
-class HRCycleDataset(torch.utils.data.Dataset):
+class HRVelCycleDataset(torch.utils.data.Dataset):
 
 
     """
@@ -17,6 +17,7 @@ class HRCycleDataset(torch.utils.data.Dataset):
         self.trajs_r = trajs_r
         self.dim_h = dim_h
         self.dim_r = dim_r
+
         
         dim = dim_h + dim_r
 

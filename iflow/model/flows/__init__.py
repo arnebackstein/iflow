@@ -2,7 +2,7 @@ from .coupling import (CouplingLayer,
                        ResNetCouplingLayer,
                        MaskedCouplingLayer)
 
-from .permutation import RandomPermutation,ReversePermutation
+from .permutation import RandomPermutation,ReversePermutation, Permutation
 
 
 from .linear import Linear, NaiveLinear, NaiveScale

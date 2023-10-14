@@ -78,23 +78,41 @@ class HRLinearLimitCycle(LimitCycleDynamicModel):
             y[..., 0] = x[..., 0] * torch.cos(x[..., 1])
             y[..., 1] = x[..., 0] * torch.sin(x[..., 1])
 
-            y[..., self.dim_h + 0] = x[..., self.dim_h + 0] * torch.cos(x[..., self.dim_h + 1])
-            y[..., self.dim_h + 1] = x[..., self.dim_h + 0] * torch.sin(x[..., self.dim_h + 1])
+            y[..., 2 + 0] = x[..., 2 + 0] * torch.cos(x[..., 2 + 1])
+            y[..., 2 + 1] = x[..., 2 + 0] * torch.sin(x[..., 2 + 1])
+
+            y[..., 4 + 0] = x[..., 4 + 0] * torch.cos(x[..., 4 + 1])
+            y[..., 4 + 1] = x[..., 4 + 0] * torch.sin(x[..., 4 + 1])
+
+            y[..., 6 + 0] = x[..., 6 + 0] * torch.cos(x[..., 6 + 1])
+            y[..., 6 + 1] = x[..., 6 + 0] * torch.sin(x[..., 6 + 1])
         else:
             r = torch.sqrt(x[..., 0] ** 2 + x[..., 1] ** 2)
             theta = torch.atan2(x[..., 1], x[..., 0])
             y[..., 0] = r
             y[..., 1] = theta
 
-            r = torch.sqrt(x[..., self.dim_h + 0] ** 2 + x[..., self.dim_h + 1] ** 2)
-            theta = torch.atan2(x[..., self.dim_h + 1], x[..., self.dim_h + 0])
-            y[..., self.dim_h + 0] = r
-            y[..., self.dim_h + 1] = theta
+            r = torch.sqrt(x[..., 2 + 0] ** 2 + x[..., 2 + 1] ** 2)
+            theta = torch.atan2(x[..., 2 + 1], x[..., 2 + 0])
+            y[..., 2 + 0] = r
+            y[..., 2 + 1] = theta
+
+            r = torch.sqrt(x[..., 4 + 0] ** 2 + x[..., 4 + 1] ** 2)
+            theta = torch.atan2(x[..., 4 + 1], x[..., 4 + 0])
+            y[..., 4 + 0] = r
+            y[..., 4 + 1] = theta
+
+            r = torch.sqrt(x[..., 6 + 0] ** 2 + x[..., 6 + 1] ** 2)
+            theta = torch.atan2(x[..., 6 + 1], x[..., 6 + 0])
+            y[..., 6 + 0] = r
+            y[..., 6 + 1] = theta
         return y
 
     def velocity(self, x):
         vel_r_h = -self.v_r*(x[:,0] - self.r_des)
-        vel_r_r = -self.v_r*(x[:, self.dim_h] - self.r_des)
+        vel_r_r = -self.v_r*(x[:, 2] - self.r_des)
+        velv_r_r = -self.v_r*(x[:, 4] - self.r_des)
+        velv_r_h = -self.v_r*(x[:, 6] - self.r_des)
         vel_theta = self.w*torch.ones(x.shape[0]).to(x)
 
 
@@ -102,7 +120,15 @@ class HRLinearLimitCycle(LimitCycleDynamicModel):
         #     vel_z = torch.matmul(self.A, x[:,2:].T).T
         #     return torch.cat((vel_r[:,None], vel_theta[:,None], vel_z),1)
         # else:
-        return torch.cat((vel_r_h[:, None], vel_theta[:, None], vel_r_r[:, None], vel_theta[:,None]),1)
+        return torch.cat((vel_r_h[:, None],
+                          vel_theta[:, None],
+                          vel_r_r[:, None],
+                          vel_theta[:,None],
+                          velv_r_r[:, None],
+                          vel_theta[:,None],
+                          velv_r_h[:, None],
+                          vel_theta[:,None],
+                          ),1)
 
     def first_Taylor_dyn(self, x):
         vel_r =  torch.cat(x.shape[0]*[-self.v_r.unsqueeze(0)[None,...]],0)
